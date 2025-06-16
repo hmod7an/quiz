@@ -1,0 +1,524 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Web Final Quiz</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: auto; padding: 20px; background: #f9f9f9; color: #333; }
+    h1, h2 { text-align: center; }
+    .question { background: #fff; border-left: 5px solid #3498db; margin-bottom: 20px; padding: 15px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    .question h3 { margin-top: 0; }
+    .options { margin-top: 10px; }
+    .options label { display: block; margin: 5px 0; cursor: pointer; }
+    .code-block { background: #f0f0f0; padding: 10px; border-radius: 5px; font-family: monospace; white-space: pre; overflow-x: auto; }
+    input[type="text"] { width: 100%; padding: 8px; margin-top: 10px; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; width: 100%; max-width: 300px; display: block; margin-left: auto; margin-right: auto; }
+    .result { font-weight: bold; font-size: 18px; text-align: center; margin-top: 20px; }
+    .correct { color: green; }
+    .incorrect { color: red; }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .question { padding: 10px; }
+      button { font-size: 14px; padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Web Programming Final Exam</h1>
+  <div id="quiz"></div>
+  <button onclick="checkAnswers()">Submit Answers</button>
+  <div class="result" id="result"></div>
+  <script>
+    const questions = [
+  {
+    "type": "output",
+    "q": "What will be the output of the following code?",
+    "code": "console.log(document.querySelector('h1').textContent);",
+    "options": [
+      "Logs the HTML content of all h1 elements",
+      "Logs the text of the first h1 element",
+      "Throws an error",
+      "Selects all headings"
+    ],
+    "answer": "B"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The JavaScript method to change the background color of a webpage is document.body.style._____.",
+    "answer": "backgroundColor"
+  },
+  {
+    "type": "output",
+    "q": "Which input field will be validated using the 'required' attribute?",
+    "code": "<input type='email' required>",
+    "options": [
+      "Only when the page loads",
+      "When the user focuses the input",
+      "When the form is submitted",
+      "Never"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: To define a CSS rule that applies only when printing, we use @_____.",
+    "answer": "media"
+  },
+  {
+    "type": "output",
+    "q": "What happens if you try to use document.write() after the page is loaded?",
+    "code": "document.write('<h1>Hello</h1>');",
+    "options": [
+      "It adds content normally",
+      "It appends the content safely",
+      "It clears the whole document",
+      "It creates an alert"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "output",
+    "q": "What will the following code output in the browser console?",
+    "code": "console.log(document.getElementById('demo').value);",
+    "options": [
+      "The text inside the element with id 'demo'",
+      "The value attribute of the element with id 'demo'",
+      "Undefined always",
+      "It changes the value to default"
+    ],
+    "answer": "B"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: To select the first child element in CSS, use :_____.",
+    "answer": "first-child"
+  },
+  {
+    "type": "output",
+    "q": "What is the role of this JavaScript?",
+    "code": "document.forms[\"login\"][\"username\"].focus();",
+    "options": [
+      "It validates the username field",
+      "It sends form data",
+      "It sets focus on the username input field",
+      "It clears the field"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The HTML tag used to group related input fields is _____.",
+    "answer": "fieldset"
+  },
+  {
+    "type": "output",
+    "q": "Which input field will trigger the invalid pseudo-class?",
+    "code": "<input type='email' value='user@'>",
+    "options": [
+      "All inputs with value",
+      "Only if empty",
+      "If email format is incorrect",
+      "None of the above"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The HTML attribute used to specify a default value for an input is _____.",
+    "answer": "value"
+  },
+  {
+    "type": "output",
+    "q": "What is the purpose of this input element?",
+    "code": "<input type='number' step='1' min='0' max='5'>",
+    "options": [
+      "Allows any number",
+      "Allows numbers from 0 to 5 in step of 1",
+      "Allows decimal numbers only",
+      "Restricts input to integers only"
+    ],
+    "answer": "B"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: To run JavaScript code after page load, use window._____.",
+    "answer": "onload"
+  },
+  {
+    "type": "output",
+    "q": "What does this CSS rule do?",
+    "code": "input:focus { border-color: blue; }",
+    "options": [
+      "Changes text color to blue",
+      "Changes border color on hover",
+      "Changes border color when input is focused",
+      "Adds a blue background"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: To submit a form using JavaScript, use form._____.",
+    "answer": "submit"
+  },
+  {
+    "type": "output",
+    "q": "What is the output of the following?",
+    "code": "console.log(typeof document.getElementById);",
+    "options": [
+      "'object'",
+      "'undefined'",
+      "'function'",
+      "'string'"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The method to convert a number to a string is _____.toString().",
+    "answer": "number"
+  },
+  {
+    "type": "output",
+    "q": "What happens with this style?",
+    "code": "input:invalid { border: 2px solid red; }",
+    "options": [
+      "Makes all input borders red",
+      "Only red when field is focused",
+      "Adds red border to invalid inputs",
+      "Makes red placeholder"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The method to select all elements with a class is document._____.",
+    "answer": "getElementsByClassName"
+  },
+  {
+    "type": "output",
+    "q": "Which of the following will select the first paragraph?",
+    "code": "document.querySelector('p');",
+    "options": [
+      "All paragraphs",
+      "An array of p tags",
+      "The first p tag",
+      "Only visible paragraphs"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "output",
+    "q": "What is the effect of this JavaScript code when clicking the button?",
+    "code": "<button onclick=\"alert('Submitted')\">Click me</button>",
+    "options": [
+      "Sends form data",
+      "Submits the form",
+      "Shows an alert with message 'Submitted'",
+      "Reloads the page"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The DOM treats every HTML element as a _____.",
+    "answer": "node"
+  },
+  {
+    "type": "output",
+    "q": "What happens when this JavaScript code runs?",
+    "code": "document.getElementById('output').innerHTML = 'Hello!';",
+    "options": [
+      "Appends text to output",
+      "Replaces output content with 'Hello!'",
+      "Shows alert",
+      "Prints to console"
+    ],
+    "answer": "B"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: CSS rules that start with input:focus apply only when the input has _____.",
+    "answer": "focus"
+  },
+  {
+    "type": "output",
+    "q": "Which option describes what this code does?",
+    "code": "<form onsubmit=\"return false\">",
+    "options": [
+      "Submits form using GET method",
+      "Prevents form submission",
+      "Redirects to another page",
+      "Validates automatically"
+    ],
+    "answer": "B"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The attribute used to specify a hint inside a text field is _____.",
+    "answer": "placeholder"
+  },
+  {
+    "type": "output",
+    "q": "What does this HTML do?",
+    "code": "<label for=\"email\">Email:</label><input type=\"email\" id=\"email\">",
+    "options": [
+      "Shows validation message",
+      "Creates label not connected to input",
+      "Associates the label with input",
+      "Makes input required"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: To get the value of an input in JavaScript, use element._____.",
+    "answer": "value"
+  },
+  {
+    "type": "output",
+    "q": "What is the function of this CSS rule?",
+    "code": "input[type='submit'] { background-color: green; }",
+    "options": [
+      "Styles all inputs",
+      "Only text inputs turn green",
+      "Submit button gets green background",
+      "Applies to all buttons"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The <script> tag is used to include _____ code in HTML.",
+    "answer": "JavaScript"
+  },
+  {
+    "type": "output",
+    "q": "What happens when this JavaScript code executes?",
+    "code": "document.querySelector('h2').style.color = 'red';",
+    "options": [
+      "Changes background color to red",
+      "Changes all text to red",
+      "Changes the first h2 element\u2019s text color to red",
+      "Adds a red border"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The CSS pseudo-class used to apply styles when hovering is :_____.",
+    "answer": "hover"
+  },
+  {
+    "type": "output",
+    "q": "Which option best describes this form field?",
+    "code": "<input type='password' required>",
+    "options": [
+      "It accepts visible text only",
+      "It hides user input and requires a value",
+      "It allows numbers only",
+      "It auto-submits on typing"
+    ],
+    "answer": "B"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The HTML tag used to display preformatted text is _____.",
+    "answer": "pre"
+  },
+  {
+    "type": "output",
+    "q": "What is the purpose of this HTML element?",
+    "code": "<div id='container'></div>",
+    "options": [
+      "Displays a form",
+      "Creates a clickable link",
+      "Holds or wraps other elements",
+      "Styles a button"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: In CSS, the box that surrounds padding and content is called _____.",
+    "answer": "border"
+  },
+  {
+    "type": "output",
+    "q": "What does this script do?",
+    "code": "window.onload = function() { alert('Loaded'); };",
+    "options": [
+      "Runs immediately",
+      "Displays alert after page loads",
+      "Blocks page loading",
+      "Does nothing"
+    ],
+    "answer": "B"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The method used to write to the browser console is console._____.",
+    "answer": "log"
+  },
+  {
+    "type": "output",
+    "q": "What is the function of this code?",
+    "code": "document.getElementById('username').value = '';",
+    "options": [
+      "Fills input with a name",
+      "Deletes input element",
+      "Clears the username input",
+      "Submits the form"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: In JavaScript, to repeat code multiple times we use a _____ loop.",
+    "answer": "for"
+  },
+  {
+    "type": "output",
+    "q": "What is the role of this JavaScript function?",
+    "code": "function greet() { return 'Hello, World!'; }",
+    "options": [
+      "Displays a greeting on screen",
+      "Returns a greeting string when called",
+      "Logs greeting to console",
+      "Adds greeting to HTML"
+    ],
+    "answer": "B"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: To define a JavaScript function, we start with the keyword _____.",
+    "answer": "function"
+  },
+  {
+    "type": "output",
+    "q": "What does this HTML element do?",
+    "code": "<button onclick=\"alert('Done')\">Submit</button>",
+    "options": [
+      "Submits the form",
+      "Adds content",
+      "Triggers a popup alert",
+      "Validates input"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: To declare a variable in JavaScript that can be reassigned, use the keyword _____.",
+    "answer": "let"
+  },
+  {
+    "type": "output",
+    "q": "What will be shown in the console?",
+    "code": "let a = 5; let b = 2; console.log(a + b);",
+    "options": [
+      "7",
+      "10",
+      "52",
+      "Error"
+    ],
+    "answer": "A"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: The <br> tag is used in HTML to create a _____.",
+    "answer": "line break"
+  },
+  {
+    "type": "output",
+    "q": "What does this line do in HTML?",
+    "code": "<link rel=\"stylesheet\" href=\"style.css\">",
+    "options": [
+      "Applies internal CSS",
+      "Embeds script",
+      "Links external CSS file",
+      "Adds font file"
+    ],
+    "answer": "C"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: JavaScript code inside the browser is executed by the _____.",
+    "answer": "interpreter"
+  },
+  {
+    "type": "output",
+    "q": "What will be the output in the console?",
+    "code": "console.log('2' + 3);",
+    "options": [
+      "5",
+      "23",
+      "'5'",
+      "Error"
+    ],
+    "answer": "B"
+  },
+  {
+    "type": "fill",
+    "q": "Fill in the blank: In HTML, the tag used to define a paragraph is _____.",
+    "answer": "p"
+  }
+];
+
+    function renderQuiz() {
+      const container = document.getElementById("quiz");
+      questions.forEach((q, index) => {
+        const div = document.createElement("div");
+        div.className = "question";
+        div.innerHTML = `<h3>Question ${index + 1}</h3><p>${q.q}</p>`;
+        if (q.type === 'output') {
+          div.innerHTML += `<div class='code-block'>${q.code}</div>`;
+          div.innerHTML += '<div class="options">' + q.options.map((opt, i) => `
+            <label><input type="radio" name="q${index}" value="${String.fromCharCode(65+i)}"> ${String.fromCharCode(65+i)}) ${opt}</label>
+          `).join('') + '</div>';
+        } else if (q.type === 'fill') {
+          div.innerHTML += `<input type="text" id="q${index}" placeholder="Your answer here">`;
+        }
+        const feedback = document.createElement("div");
+        feedback.id = `feedback${index}`;
+        div.appendChild(feedback);
+        container.appendChild(div);
+      });
+    }
+
+    function checkAnswers() {
+      let score = 0;
+      questions.forEach((q, index) => {
+        const feedback = document.getElementById(`feedback${index}`);
+        feedback.innerHTML = '';
+        if (q.type === 'output') {
+          const selected = document.querySelector(`input[name=q${index}]:checked`);
+          if (selected) {
+            if (selected.value === q.answer) {
+              score++;
+              feedback.innerHTML = '<p class="correct">Correct ✅</p>';
+            } else {
+              feedback.innerHTML = `<p class="incorrect">Incorrect ❌ — Correct answer: ${q.answer}</p>`;
+            }
+          } else {
+            feedback.innerHTML = '<p class="incorrect">No answer selected ❌</p>';
+          }
+        } else if (q.type === 'fill') {
+          const input = document.getElementById(`q${index}`);
+          const userInput = input.value.trim().toLowerCase();
+          if (userInput === q.answer.toLowerCase()) {
+            score++;
+            feedback.innerHTML = '<p class="correct">Correct ✅</p>';
+          } else {
+            feedback.innerHTML = `<p class="incorrect">Incorrect ❌ — Correct answer: ${q.answer}</p>`;
+          }
+        }
+      });
+      document.getElementById("result").innerText = `You got ${score} out of ${questions.length} correct.`;
+    }
+
+    renderQuiz();
+  </script>
+</body>
+</html>
